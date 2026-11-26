@@ -315,10 +315,13 @@ mod tests {
         assert!(msg.contains("firefox.exe"));
 
         fs::create_dir_all(&layout.runtime_dir).unwrap();
-        let firefox_bin = layout.runtime_dir.join("firefox");
-        fs::write(&firefox_bin, b"#!/bin/sh\n").unwrap();
-        let found = validate_runtime(&layout).expect("non-windows firefox binary");
-        assert_eq!(found, firefox_bin);
+        #[cfg(not(windows))]
+        {
+            let firefox_bin = layout.runtime_dir.join("firefox");
+            fs::write(&firefox_bin, b"#!/bin/sh\n").unwrap();
+            let found = validate_runtime(&layout).expect("non-windows firefox binary");
+            assert_eq!(found, firefox_bin);
+        }
 
         // `firefox.exe` takes precedence over `firefox` when present.
         let firefox_exe = layout.runtime_dir.join("firefox.exe");
