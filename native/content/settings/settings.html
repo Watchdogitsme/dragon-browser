@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="obsidian">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src chrome: resource:; img-src chrome: data:; style-src chrome:; script-src chrome:; object-src 'none';">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dragon Settings</title>
+  <link rel="icon" type="image/svg+xml" href="../icons/dragon.svg">
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div class="settings-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="settings-sidebar">
+      <div class="sidebar-brand">
+        <svg class="dragon-emblem" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="settingsDragonGrad" x1="10" y1="8" x2="54" y2="56" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ff7a45"/>
+              <stop offset="52%" stop-color="#e84855"/>
+              <stop offset="100%" stop-color="#a61b34"/>
+            </linearGradient>
+          </defs>
+          <path d="M32 6L52 17L47 36L32 58L17 36L12 17L32 6Z" fill="url(#settingsDragonGrad)" fill-opacity="0.16" stroke="url(#settingsDragonGrad)" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M21 15L29 24L32 13L35 24L43 15L41 29L48 34L36 40L32 50L28 40L16 34L23 29L21 15Z" fill="url(#settingsDragonGrad)"/>
+          <circle cx="32" cy="32" r="2.3" fill="#09090d"/>
+        </svg>
+        <div>
+          <h1 class="sidebar-title">Dragon</h1>
+          <p class="sidebar-subtitle">Browser Settings</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Settings sections">
+        <a href="#section-search" class="nav-link is-active" data-section="section-search">Search Engine</a>
+        <a href="#section-ai" class="nav-link" data-section="section-ai">AI Direct Search</a>
+        <a href="#section-shield" class="nav-link" data-section="section-shield">Dragon Shield</a>
+        <a href="#section-extensions" class="nav-link" data-section="section-extensions">Extensions</a>
+        <a href="#section-sleep" class="nav-link" data-section="section-sleep">Auto-Sleeping Tabs</a>
+        <a href="#section-appearance" class="nav-link" data-section="section-appearance">Appearance</a>
+      </nav>
+    </aside>
+
+    <!-- Main Settings Content -->
+    <main class="settings-main">
+      <!-- 1. Search Engine -->
+      <section id="section-search" class="settings-card">
+        <div class="card-header">
+          <div>
+            <h2 class="section-title">Search Engine</h2>
+            <p class="section-desc">Choose your default search engine for the Dragon Home bar and address bar.</p>
+          </div>
+        </div>
+
+        <div id="engine-radio-grid" class="engine-radio-grid" role="radiogroup" aria-label="Default search engine">
+          <label class="engine-option">
+            <input type="radio" name="defaultEngine" value="google" checked>
+            <span class="engine-option-body">
+              <span class="engine-option-name">Google</span>
+              <span class="engine-option-code">@google</span>
+            </span>
+          </label>
+
+          <label class="engine-option">
+            <input type="radio" name="defaultEngine" value="duckduckgo">
+            <span class="engine-option-body">
+              <span class="engine-option-name">DuckDuckGo</span>
+              <span class="engine-option-code">@ddg</span>
+            </span>
+          </label>
+
+          <label class="engine-option">
+            <input type="radio" name="defaultEngine" value="brave">
+            <span class="engine-option-body">
+              <span class="engine-option-name">Brave Search</span>
+              <span class="engine-option-code">@brave</span>
+            </span>
+          </label>
+
+          <label class="engine-option">
+            <input type="radio" name="defaultEngine" value="bing">
+            <span class="engine-option-body">
+              <span class="engine-option-name">Bing</span>
+              <span class="engine-option-code">@bing</span>
+            </span>
+          </label>
+
+          <label class="engine-option">
+            <input type="radio" name="defaultEngine" value="startpage">
+            <span class="engine-option-body">
+              <span class="engine-option-name">Startpage</span>
+              <span class="engine-option-code">@sp</span>
+            </span>
+          </label>
+
+          <label class="engine-option">
+            <input type="radio" name="defaultEngine" value="custom">
+            <span class="engine-option-body">
+              <span class="engine-option-name">Custom URL</span>
+              <span class="engine-option-code">{q} template</span>
+            </span>
+          </label>
+        </div>
+
+        <div id="custom-url-group" class="field-group">
+          <label class="field-label" for="custom-search-url">Custom Search URL Template</label>
+          <input
+            id="custom-search-url"
+            class="text-input mono-input"
+            type="url"
+            placeholder="https://example.com/search?q={q}"
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <p id="custom-url-hint" class="field-hint">
+            Use <code>{q}</code> where your encoded search query should be inserted.
+          </p>
+        </div>
+      </section>
+
+      <!-- 2. AI Chatbot Direct Search -->
+      <section id="section-ai" class="settings-card">
+        <div class="card-header">
+          <div>
+            <h2 class="section-title">AI Chatbot Direct Search</h2>
+            <p class="section-desc">Customize destination templates for direct AI queries from Home, Shield Panel, and <code>@prefix</code> commands.</p>
+          </div>
+          <button type="button" id="reset-ai-defaults-btn" class="btn btn-secondary">Reset Defaults</button>
+        </div>
+
+        <div class="ai-template-list">
+          <div class="field-group">
+            <div class="field-label-row">
+              <label class="field-label" for="ai-url-gemini">
+                <span class="ai-dot gemini-dot" aria-hidden="true">&#10022;</span> Gemini
+              </label>
+              <span class="prefix-tag">@gemini &middot; !gm</span>
+            </div>
+            <input id="ai-url-gemini" class="text-input mono-input" type="url" data-ai-key="gemini" spellcheck="false" autocomplete="off">
+          </div>
+
+          <div class="field-group">
+            <div class="field-label-row">
+              <label class="field-label" for="ai-url-claude">
+                <span class="ai-dot claude-dot" aria-hidden="true">&#9672;</span> Claude
+              </label>
+              <span class="prefix-tag">@claude &middot; !cl</span>
+            </div>
+            <input id="ai-url-claude" class="text-input mono-input" type="url" data-ai-key="claude" spellcheck="false" autocomplete="off">
+          </div>
+
+          <div class="field-group">
+            <div class="field-label-row">
+              <label class="field-label" for="ai-url-chatgpt">
+                <span class="ai-dot chatgpt-dot" aria-hidden="true">&#9678;</span> ChatGPT
+              </label>
+              <span class="prefix-tag">@gpt &middot; @chatgpt</span>
+            </div>
+            <input id="ai-url-chatgpt" class="text-input mono-input" type="url" data-ai-key="chatgpt" spellcheck="false" autocomplete="off">
+          </div>
+
+          <div class="field-group">
+            <div class="field-label-row">
+              <label class="field-label" for="ai-url-perplexity">
+                <span class="ai-dot perplexity-dot" aria-hidden="true">&#8984;</span> Perplexity
+              </label>
+              <span class="prefix-tag">@perp &middot; !p</span>
+            </div>
+            <input id="ai-url-perplexity" class="text-input mono-input" type="url" data-ai-key="perplexity" spellcheck="false" autocomplete="off">
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Dragon Shield -->
+      <section id="section-shield" class="settings-card">
+        <div class="card-header">
+          <div>
+            <h2 class="section-title">Dragon Shield</h2>
+            <p class="section-desc">Built-in native ad and tracker blocking at the network and page cosmetic level.</p>
+          </div>
+        </div>
+
+        <div class="toggle-list">
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <span class="toggle-title">Network Ad &amp; Tracker Blocking</span>
+              <span class="toggle-desc">Blocks known ad servers, analytics beacons, and tracking scripts before they load.</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="adblock-enabled" checked aria-label="Enable network ad and tracker blocking">
+              <span class="switch-track"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <span class="toggle-title">Cosmetic Element Blocking</span>
+              <span class="toggle-desc">Hides leftover ad containers, sponsored banners, and empty ad frames cleanly.</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="cosmetic-blocking-enabled" checked aria-label="Enable cosmetic element blocking">
+              <span class="switch-track"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field-group">
+          <div class="field-label-row">
+            <label class="field-label" for="allowlist-input">Allowlisted Sites</label>
+            <span id="allowlist-count" class="count-pill">0 sites</span>
+          </div>
+          <p class="field-hint">Dragon Shield stays paused on domains in this list.</p>
+
+          <form id="allowlist-form" class="inline-add-form">
+            <input
+              id="allowlist-input"
+              class="text-input"
+              type="text"
+              placeholder="Add domain (e.g. example.com)"
+              autocomplete="off"
+              spellcheck="false"
+            >
+            <button type="submit" class="btn btn-primary">Add</button>
+          </form>
+
+          <div id="allowlist-chips" class="domain-chip-list"></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field-group">
+          <div class="field-label-row">
+            <label class="field-label" for="custom-blocked-domains">Custom Blocked Domains</label>
+            <span id="custom-blocked-count" class="count-pill">0 domains</span>
+          </div>
+          <p class="field-hint">Enter one domain per line (subdomains are blocked automatically).</p>
+          <textarea
+            id="custom-blocked-domains"
+            class="textarea-input mono-input"
+            rows="5"
+            placeholder="ads.example.com&#10;tracker.example.net"
+            spellcheck="false"
+          ></textarea>
+        </div>
+      </section>
+
+      <!-- 4. Recommended Optional Extensions -->
+      <section id="section-extensions" class="settings-card">
+        <div class="card-header">
+          <div>
+            <h2 class="section-title">Recommended Optional Extensions</h2>
+            <p class="section-desc">Built-in Mozilla extensions are disabled at startup to eliminate the idle extension process (~60–110 MB RAM). Install only what you need anytime.</p>
+          </div>
+          <button type="button" id="open-addons-btn" class="btn btn-secondary">Open about:addons</button>
+        </div>
+
+        <div id="optional-addons-list" class="optional-addons-list"></div>
+      </section>
+
+      <!-- 5. Auto-Sleeping Tabs -->
+      <section id="section-sleep" class="settings-card">
+        <div class="card-header">
+          <div>
+            <h2 class="section-title">Auto-Sleeping Tabs</h2>
+            <p class="section-desc">Automatically hibernate idle background tabs to keep memory usage ultra-low. Pinned and audible tabs are never slept.</p>
+          </div>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-title">Enable Auto-Sleeping Tabs</span>
+            <span class="toggle-desc">Unloads inactive tabs after your chosen idle period and reloads them on click.</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="tab-sleep-enabled" checked aria-label="Enable auto-sleeping tabs">
+            <span class="switch-track"></span>
+          </label>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label">Idle Timeout</span>
+          <div id="sleep-timeout-group" class="segmented-group" role="group" aria-label="Idle timeout duration">
+            <button type="button" class="segment-btn" data-minutes="2">2 min</button>
+            <button type="button" class="segment-btn is-active" data-minutes="5">5 min</button>
+            <button type="button" class="segment-btn" data-minutes="10">10 min</button>
+            <button type="button" class="segment-btn" data-minutes="30">30 min</button>
+            <button type="button" class="segment-btn" data-minutes="60">60 min</button>
+            <button type="button" class="segment-btn" data-minutes="0">Off</button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label-row">
+            <label class="field-label" for="sleep-excluded-domains">Excluded Domains</label>
+            <span id="sleep-excluded-count" class="count-pill">0 domains</span>
+          </div>
+          <p class="field-hint">Tabs on these domains will never be put to sleep automatically (one per line).</p>
+          <textarea
+            id="sleep-excluded-domains"
+            class="textarea-input mono-input"
+            rows="4"
+            placeholder="music.youtube.com&#10;meet.google.com&#10;mail.google.com"
+            spellcheck="false"
+          ></textarea>
+        </div>
+      </section>
+
+      <!-- 5. Appearance -->
+      <section id="section-appearance" class="settings-card">
+        <div class="card-header">
+          <div>
+            <h2 class="section-title">Appearance</h2>
+            <p class="section-desc">Switch Dragon's dark theme across Home, Shield Panel, and Settings, and manage automatic Force Dark styling for websites.</p>
+          </div>
+        </div>
+
+        <div id="theme-card-grid" class="theme-card-grid" role="radiogroup" aria-label="Browser theme">
+          <button type="button" class="theme-card is-active" data-theme-choice="obsidian" aria-pressed="true">
+            <span class="theme-preview preview-obsidian" aria-hidden="true">
+              <span class="preview-bar"></span>
+              <span class="preview-accent"></span>
+            </span>
+            <span class="theme-card-title">Dragon Obsidian</span>
+            <span class="theme-card-desc">Deep ink &amp; crimson ember</span>
+          </button>
+
+          <button type="button" class="theme-card" data-theme-choice="slate" aria-pressed="false">
+            <span class="theme-preview preview-slate" aria-hidden="true">
+              <span class="preview-bar"></span>
+              <span class="preview-accent"></span>
+            </span>
+            <span class="theme-card-title">Midnight Slate</span>
+            <span class="theme-card-desc">Cool blue-charcoal dark</span>
+          </button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-title">Force Dark Mode on Websites</span>
+            <span class="toggle-desc">Automatically restyle light websites into deep obsidian dark while skipping sites that already use a dark theme.</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="force-dark-enabled" checked aria-label="Force dark mode on websites">
+            <span class="switch-track"></span>
+          </label>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label-row">
+            <label class="field-label" for="force-dark-excluded-domains">Force Dark Excluded Domains</label>
+            <span id="force-dark-excluded-count" class="count-pill">0 domains</span>
+          </div>
+          <p class="field-hint">Websites on these domains keep their original colors without forced dark styling (one per line).</p>
+          <textarea
+            id="force-dark-excluded-domains"
+            class="textarea-input mono-input"
+            rows="4"
+            placeholder="docs.google.com&#10;figma.com&#10;miro.com"
+            spellcheck="false"
+          ></textarea>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="save-toast" class="save-toast" role="status" aria-live="polite" hidden>Saved</div>
+
+  <script src="settings.js" defer></script>
+</body>
+</html>

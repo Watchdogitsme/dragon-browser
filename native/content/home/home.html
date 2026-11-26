@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="obsidian">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src chrome: resource:; img-src chrome: data:; style-src chrome:; script-src chrome:; object-src 'none';">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dragon</title>
+  <link rel="icon" type="image/svg+xml" href="../icons/dragon.svg">
+  <link rel="stylesheet" href="home.css">
+</head>
+<body>
+  <div class="ambient-bg" aria-hidden="true"></div>
+
+  <main class="home-stage">
+    <div class="center-stack">
+      <header class="brand-header">
+        <svg class="dragon-emblem" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Dragon">
+          <defs>
+            <linearGradient id="homeDragonGrad" x1="10" y1="8" x2="54" y2="56" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ff7a45"/>
+              <stop offset="52%" stop-color="#e84855"/>
+              <stop offset="100%" stop-color="#a61b34"/>
+            </linearGradient>
+            <linearGradient id="homeDragonInner" x1="18" y1="14" x2="46" y2="50" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ffb38a"/>
+              <stop offset="100%" stop-color="#e84855"/>
+            </linearGradient>
+          </defs>
+          <path d="M32 6L52 17L47 36L32 58L17 36L12 17L32 6Z" fill="url(#homeDragonGrad)" fill-opacity="0.14" stroke="url(#homeDragonGrad)" stroke-width="2.2" stroke-linejoin="round"/>
+          <path d="M21 15L29 24L32 13L35 24L43 15L41 29L48 34L36 40L32 50L28 40L16 34L23 29L21 15Z" fill="url(#homeDragonGrad)"/>
+          <path d="M32 23L37 32L32 42L27 32L32 23Z" fill="url(#homeDragonInner)" fill-opacity="0.88"/>
+          <circle cx="32" cy="32" r="2.2" fill="#09090d"/>
+        </svg>
+        <span id="private-mode-badge" class="private-mode-badge" hidden>Private</span>
+      </header>
+
+      <section class="search-section" aria-label="Search and AI">
+        <form id="search-form" class="search-bar" role="search">
+          <div class="target-picker-wrap">
+            <button
+              type="button"
+              id="active-target-pill"
+              class="target-pill"
+              data-target="google"
+              aria-haspopup="menu"
+              aria-expanded="false"
+              aria-controls="target-menu"
+              title="Click or press Tab to switch search / AI"
+            >
+              <span id="active-target-glyph" class="target-pill-glyph" aria-hidden="true">G</span>
+              <span id="active-target-label" class="target-pill-label">Google</span>
+              <svg class="target-pill-chevron" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 4.5L6 7.5L9 4.5"/>
+              </svg>
+            </button>
+
+            <div id="target-menu" class="target-menu" role="menu" aria-label="Choose search engine or AI" aria-hidden="true" inert>
+              <div class="target-menu-label" role="presentation">Search</div>
+              <div id="target-menu-search" class="target-menu-group" role="none">
+                <button type="button" class="target-option is-selected" role="menuitemradio" data-engine="google" data-category="search" aria-checked="true">
+                  <span class="target-option-glyph" aria-hidden="true">G</span>
+                  <span class="target-option-name">Google</span>
+                  <span class="target-option-prefix">@google</span>
+                </button>
+                <button type="button" class="target-option" role="menuitemradio" data-engine="duckduckgo" data-category="search" aria-checked="false">
+                  <span class="target-option-glyph" aria-hidden="true">D</span>
+                  <span class="target-option-name">DuckDuckGo</span>
+                  <span class="target-option-prefix">@ddg</span>
+                </button>
+                <button type="button" class="target-option" role="menuitemradio" data-engine="brave" data-category="search" aria-checked="false">
+                  <span class="target-option-glyph" aria-hidden="true">B</span>
+                  <span class="target-option-name">Brave</span>
+                  <span class="target-option-prefix">@brave</span>
+                </button>
+              </div>
+
+              <div class="target-menu-divider" role="separator"></div>
+
+              <div class="target-menu-label" role="presentation">AI</div>
+              <div id="target-menu-ai" class="target-menu-group" role="none">
+                <button type="button" class="target-option" role="menuitemradio" data-engine="gemini" data-category="ai" aria-checked="false">
+                  <span class="target-option-glyph" aria-hidden="true">&#10022;</span>
+                  <span class="target-option-name">Gemini</span>
+                  <span class="target-option-prefix">@gemini</span>
+                </button>
+                <button type="button" class="target-option" role="menuitemradio" data-engine="claude" data-category="ai" aria-checked="false">
+                  <span class="target-option-glyph" aria-hidden="true">&#9672;</span>
+                  <span class="target-option-name">Claude</span>
+                  <span class="target-option-prefix">@claude</span>
+                </button>
+                <button type="button" class="target-option" role="menuitemradio" data-engine="chatgpt" data-category="ai" aria-checked="false">
+                  <span class="target-option-glyph" aria-hidden="true">&#9678;</span>
+                  <span class="target-option-name">ChatGPT</span>
+                  <span class="target-option-prefix">@gpt</span>
+                </button>
+                <button type="button" class="target-option" role="menuitemradio" data-engine="perplexity" data-category="ai" aria-checked="false">
+                  <span class="target-option-glyph" aria-hidden="true">&#8984;</span>
+                  <span class="target-option-name">Perplexity</span>
+                  <span class="target-option-prefix">@perp</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <input
+            id="search-input"
+            class="search-input"
+            type="text"
+            autofocus
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            placeholder="Search Google or enter a URL..."
+            aria-label="Search the web, enter a URL, or ask an AI chatbot"
+          >
+
+          <button type="button" id="search-clear-btn" class="search-clear-btn" aria-label="Clear search" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d="M4 4l8 8M12 4l-8 8"/>
+            </svg>
+          </button>
+
+          <button type="submit" id="search-submit-btn" class="search-submit-btn" aria-label="Launch query">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 10h12M11 5l5 5-5 5"/>
+            </svg>
+          </button>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <div id="home-toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="home.js" defer></script>
+</body>
+</html>

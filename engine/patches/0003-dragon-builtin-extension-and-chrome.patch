@@ -1,0 +1,20 @@
+From 0000000000000000000000000000000000000003 Mon Sep 17 00:00:00 2001
+From: Dragon Browser Engine Team <engine@dragonbrowser.local>
+Date: Mon, 19 Nov 2026 00:00:00 +0000
+Subject: [PATCH 3/4] Dragon Chrome: declutter browser.xhtml and mark Dragon Browser root
+
+---
+diff --git a/browser/base/content/browser.xhtml b/browser/base/content/browser.xhtml
+--- a/browser/base/content/browser.xhtml
++++ b/browser/base/content/browser.xhtml
+@@ -1,8 +1,8 @@
+ <?xml version="1.0"?>
+ <!DOCTYPE html>
+-<html id="main-window" xmlns="http://www.w3.org/1999/xhtml">
++<html id="main-window" xmlns="http://www.w3.org/1999/xhtml" data-dragon-browser="true">
+ <head>
+-  <title>Mozilla Firefox</title>
++  <title>Dragon Browser</title>
+ </head>
+ <body>
+   <toolbar id="TabsToolbar" />

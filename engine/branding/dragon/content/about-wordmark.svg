@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 48" width="320" height="48" role="img" aria-label="Dragon Browser">
+  <defs>
+    <linearGradient id="wordmark-ember" x1="0" y1="0" x2="320" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ff7a45"/>
+      <stop offset="50%" stop-color="#f43f5e"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+  </defs>
+  <text
+    x="2"
+    y="35"
+    fill="url(#wordmark-ember)"
+    font-family="Segoe UI, Inter, system-ui, -apple-system, sans-serif"
+    font-size="30"
+    font-weight="800"
+    letter-spacing="1.5"
+  >DRAGON</text>
+  <text
+    x="156"
+    y="35"
+    fill="#e2e8f0"
+    font-family="Segoe UI, Inter, system-ui, -apple-system, sans-serif"
+    font-size="26"
+    font-weight="400"
+    letter-spacing="1"
+  >BROWSER</text>
+</svg>

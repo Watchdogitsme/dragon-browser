@@ -1,0 +1,317 @@
+name: Release (Signed)
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: "Mozilla Gecko engine channel"
+        required: true
+        default: "esr"
+        type: choice
+        options:
+          - esr
+          - release
+      version:
+        description: "Optional pinned Gecko/Firefox version (leave blank for latest)"
+        required: false
+        default: ""
+        type: string
+      sign:
+        description: "Sign Dragon binaries with SignPath Foundation (requires SIGNPATH_API_TOKEN)"
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  build-and-sign-core:
+    name: Build & Sign Core Binaries
+    runs-on: windows-latest
+    outputs:
+      signing_enabled: ${{ steps.signpath_cfg.outputs.enabled }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run Rust workspace tests
+        run: cargo test --workspace --locked
+
+      - name: Generate branding assets
+        run: python engine/scripts/generate-branding-assets.py
+
+      - name: Build release launcher & installer stub
+        run: cargo build --release --locked -p dragon-browser -p dragon-installer-stub
+
+      - name: Stage unsigned core binaries
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path stage-core | Out-Null
+          Copy-Item target/release/dragon-browser.exe stage-core/dragon-browser.exe -Force
+          Copy-Item target/release/dragon-installer-stub.exe stage-core/uninstall.exe -Force
+
+      - name: Upload unsigned core binaries artifact
+        id: upload_core
+        uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-core-binaries
+          path: |
+            stage-core/dragon-browser.exe
+            stage-core/uninstall.exe
+          if-no-files-found: error
+
+      - name: Check SignPath configuration
+        id: signpath_cfg
+        shell: pwsh
+        env:
+          HAS_TOKEN: ${{ secrets.SIGNPATH_API_TOKEN != '' }}
+          ORG_ID: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          WANT_SIGN: ${{ github.event_name == 'push' || inputs.sign }}
+        run: |
+          $enabled = ($env:WANT_SIGN -eq 'true') -and ($env:HAS_TOKEN -eq 'True') -and (-not [string]::IsNullOrWhiteSpace($env:ORG_ID))
+          if ($enabled) {
+            Write-Host "SignPath signing ENABLED (org=$env:ORG_ID)."
+            "enabled=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          } else {
+            Write-Host "::warning::SignPath secrets/variables not configured or signing disabled; running in unsigned dry-run mode."
+            "enabled=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          }
+
+      - name: Submit core binaries to SignPath
+        if: steps.signpath_cfg.outputs.enabled == 'true'
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG || 'dragon-browser' }}
+          signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG || 'release-signing' }}
+          artifact-configuration-slug: core-binaries
+          github-artifact-id: ${{ steps.upload_core.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed-core
+
+      - name: Verify SignPath signatures on core binaries
+        if: steps.signpath_cfg.outputs.enabled == 'true'
+        shell: pwsh
+        run: |
+          if (-not (Test-Path 'signed-core/dragon-browser.exe')) {
+            Get-ChildItem -Path 'signed-core' -Filter '*.zip' -File -ErrorAction SilentlyContinue | ForEach-Object {
+              Expand-Archive -Path $_.FullName -DestinationPath 'signed-core' -Force
+            }
+          }
+          foreach ($name in @('dragon-browser.exe', 'uninstall.exe')) {
+            $found = Get-ChildItem -Path 'signed-core' -Filter $name -Recurse -File | Select-Object -First 1
+            if (-not $found) { throw "Missing signed binary: $name under signed-core/" }
+            $destFull = [System.IO.Path]::GetFullPath((Join-Path 'signed-core' $name))
+            if ($found.FullName -ine $destFull) {
+              Copy-Item -LiteralPath $found.FullName -Destination $destFull -Force
+            }
+            $sig = Get-AuthenticodeSignature -LiteralPath $destFull
+            Write-Host "$destFull -> $($sig.Status) ($($sig.SignerCertificate.Subject))"
+            if ($sig.Status -ne 'Valid') { throw "Invalid signature on $destFull ($($sig.Status))" }
+          }
+
+      - name: Prepare core-binaries-ready artifact
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path ready-core | Out-Null
+          if ("${{ steps.signpath_cfg.outputs.enabled }}" -eq "true") {
+            Copy-Item signed-core/dragon-browser.exe ready-core/dragon-browser.exe -Force
+            Copy-Item signed-core/uninstall.exe ready-core/uninstall.exe -Force
+          } else {
+            Copy-Item stage-core/dragon-browser.exe ready-core/dragon-browser.exe -Force
+            Copy-Item stage-core/uninstall.exe ready-core/uninstall.exe -Force
+          }
+          Copy-Item target/release/dragon-installer-stub.exe ready-core/dragon-installer-stub.exe -Force
+
+      - name: Upload core-binaries-ready artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: core-binaries-ready
+          path: ready-core/*
+          if-no-files-found: error
+
+  package-and-sign-installer:
+    name: Fetch Mozilla-Signed Engine & Package Release
+    needs: build-and-sign-core
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download core-binaries-ready
+        uses: actions/download-artifact@v4
+        with:
+          name: core-binaries-ready
+          path: ready-core
+
+      - name: Stage dist layout & resources
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist/resources/autoconfig, dist/resources/chrome, installer/build | Out-Null
+          Copy-Item ready-core/dragon-browser.exe dist/dragon-browser.exe -Force
+          Copy-Item ready-core/dragon-installer-stub.exe installer/build/dragon-installer-stub.exe -Force
+          Copy-Item gecko/user.js dist/resources/user.js -Force
+          Copy-Item gecko/policies.template.json dist/resources/policies.template.json -Force
+          Copy-Item gecko/autoconfig/* dist/resources/autoconfig/ -Force
+          Copy-Item gecko/chrome/* dist/resources/chrome/ -Force
+          Copy-Item scripts/setup-runtime.ps1 dist/setup-runtime.ps1 -Force
+          Copy-Item scripts/setup-runtime.sh dist/setup-runtime.sh -Force
+
+      - name: Fetch official Mozilla-signed Win64 Gecko runtime & compile pack
+        shell: pwsh
+        run: |
+          $ch = "${{ inputs.channel }}"
+          if ([string]::IsNullOrWhiteSpace($ch)) { $ch = "esr" }
+          $argsList = @("engine/scripts/upgrade-engine.py", "--channel", $ch, "--force")
+          $ver = "${{ inputs.version }}"
+          if (-not [string]::IsNullOrWhiteSpace($ver)) {
+            $argsList += @("--version", $ver)
+          }
+          python @argsList
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python engine/scripts/compile-engine-pack.py --runtime-dir dist/runtime --native-dir native --verify-only --require-signed-runtime
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Audit Mozilla Authenticode signatures on runtime
+        shell: pwsh
+        run: ./scripts/verify-signatures.ps1 -RuntimeOnly -Strict
+
+      - name: Package Setup .exe and Portable .zip
+        shell: pwsh
+        run: |
+          $pkgArgs = @(
+            "scripts/package-installer.py",
+            "--dist-dir", "dist",
+            "--output-dir", "release-unsigned",
+            "--stub", "ready-core/dragon-installer-stub.exe",
+            "--signed-uninstaller", "ready-core/uninstall.exe",
+            "--also-zip",
+            "--require-signed-runtime"
+          )
+          if ("${{ needs.build-and-sign-core.outputs.signing_enabled }}" -eq "true") {
+            $pkgArgs += "--require-signed-launcher"
+          }
+          python @pkgArgs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload unsigned Windows installer artifact
+        id: upload_installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-windows-installer
+          path: release-unsigned/DragonBrowser-Setup-*-win64.exe
+          if-no-files-found: error
+
+      - name: Submit Setup .exe to SignPath
+        if: needs.build-and-sign-core.outputs.signing_enabled == 'true'
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG || 'dragon-browser' }}
+          signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG || 'release-signing' }}
+          artifact-configuration-slug: windows-installer
+          github-artifact-id: ${{ steps.upload_installer.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: release-signed
+
+      - name: Assemble final release directory & verify Setup .exe
+        shell: pwsh
+        run: |
+          function Invoke-GuiProcess {
+            param(
+              [Parameter(Mandatory)][string]$FilePath,
+              [Parameter(Mandatory)][string[]]$ArgumentList
+            )
+            $p = Start-Process -FilePath $FilePath -ArgumentList $ArgumentList -Wait -PassThru -NoNewWindow
+            if ($p.ExitCode -ne 0) {
+              throw "$FilePath $($ArgumentList -join ' ') failed with exit code $($p.ExitCode)"
+            }
+          }
+
+          New-Item -ItemType Directory -Force -Path release-final | Out-Null
+          Copy-Item release-unsigned/DragonBrowser-Portable-*-win64.zip release-final/ -Force
+          if ("${{ needs.build-and-sign-core.outputs.signing_enabled }}" -eq "true") {
+            if (-not (Get-ChildItem -Path 'release-signed' -Filter 'DragonBrowser-Setup-*-win64.exe' -File -ErrorAction SilentlyContinue)) {
+              Get-ChildItem -Path 'release-signed' -Filter '*.zip' -File -ErrorAction SilentlyContinue | ForEach-Object {
+                Expand-Archive -Path $_.FullName -DestinationPath 'release-signed' -Force
+              }
+            }
+            $signedSetup = Get-ChildItem -Path 'release-signed' -Filter 'DragonBrowser-Setup-*-win64.exe' -Recurse -File | Select-Object -First 1
+            if (-not $signedSetup) { throw "Missing signed Setup .exe under release-signed/" }
+            Copy-Item -LiteralPath $signedSetup.FullName -Destination release-final/ -Force
+          } else {
+            Copy-Item release-unsigned/DragonBrowser-Setup-*-win64.exe release-final/ -Force
+          }
+
+          $setupExe = (Get-ChildItem release-final/DragonBrowser-Setup-*-win64.exe | Select-Object -First 1).FullName
+          if ("${{ needs.build-and-sign-core.outputs.signing_enabled }}" -eq "true") {
+            $sig = Get-AuthenticodeSignature -LiteralPath $setupExe
+            Write-Host "$setupExe -> $($sig.Status) ($($sig.SignerCertificate.Subject))"
+            if ($sig.Status -ne 'Valid') { throw "Signed Setup .exe signature invalid: $($sig.Status)" }
+          }
+
+          Invoke-GuiProcess -FilePath $setupExe -ArgumentList @('--verify')
+
+          # Smoke-test silent install, doctor check, installed binary signatures, and uninstall
+          $smokeDir = "C:\Temp\DragonSmoke"
+          if (Test-Path $smokeDir) { Remove-Item $smokeDir -Recurse -Force }
+          Invoke-GuiProcess -FilePath $setupExe -ArgumentList @('/S', "/D=$smokeDir", '--no-shortcuts')
+          Invoke-GuiProcess -FilePath "$smokeDir\dragon-browser.exe" -ArgumentList @('--doctor')
+
+          if ("${{ needs.build-and-sign-core.outputs.signing_enabled }}" -eq "true") {
+            foreach ($bin in @("$smokeDir\dragon-browser.exe", "$smokeDir\uninstall.exe", "$smokeDir\runtime\dragon.exe")) {
+              $s = Get-AuthenticodeSignature -LiteralPath $bin
+              if ($s.Status -ne 'Valid') { throw "Installed binary signature invalid: $bin ($($s.Status))" }
+            }
+          }
+
+          Invoke-GuiProcess -FilePath "$smokeDir\uninstall.exe" -ArgumentList @('--uninstall', '--silent', '--remove-profile')
+          Start-Sleep -Seconds 3
+
+          # Generate final SHA256SUMS.txt over final artifacts
+          $lines = @()
+          Get-ChildItem release-final -File | Sort-Object Name | ForEach-Object {
+            $h = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            $lines += "$h  $($_.Name)"
+          }
+          $lines | Out-File -FilePath release-final/SHA256SUMS.txt -Encoding ascii
+
+      - name: Upload final release workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dragon-browser-release
+          path: release-final/*
+          if-no-files-found: error
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-final/*
+          generate_release_notes: true
+          prerelease: ${{ contains(github.ref_name, '-') }}

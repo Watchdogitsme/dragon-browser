@@ -1,0 +1,42 @@
+# Environment variables & secrets (NEVER commit)
+.env
+.env.*
+*.env
+
+# Rust build artifacts
+target/
+
+# Generated portable distribution bundle (rebuilt from source by scripts & CI)
+dist/
+
+# Generated Windows Setup installers, checksums & cached stub
+release/
+installer/build/
+
+# Gecko from-source build artifacts & cache
+engine/src/
+engine/cache/
+obj-dragon/
+
+# Temporary installer & download files
+firefox-esr-*.exe
+Firefox*Setup*.exe
+*.installer.exe
+*.tmp
+*.part
+*.download
+*.cab
+*.msi
+tmp/
+
+# Python & test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# OS & editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo

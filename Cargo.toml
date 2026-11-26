@@ -1,0 +1,28 @@
+[workspace]
+members = [".", "crates/win-icon-res", "installer"]
+resolver = "2"
+
+[package]
+name = "dragon-browser"
+version = "1.0.0"
+edition = "2021"
+build = "launcher/build.rs"
+description = "Native portable Windows launcher for Dragon Browser"
+
+[[bin]]
+name = "dragon-browser"
+path = "launcher/src/main.rs"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+url = "2.5"
+
+[build-dependencies]
+win-icon-res = { path = "crates/win-icon-res" }
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true

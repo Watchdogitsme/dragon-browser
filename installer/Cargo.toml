@@ -1,0 +1,19 @@
+[package]
+name = "dragon-installer-stub"
+version = "1.0.0"
+edition = "2021"
+build = "build.rs"
+description = "Self-contained native Windows setup & uninstaller stub for Dragon Browser"
+
+[[bin]]
+name = "dragon-installer-stub"
+path = "src/main.rs"
+
+[dependencies]
+crc32fast = "1.5"
+flate2 = { version = "1.1", default-features = false, features = ["rust_backend"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[build-dependencies]
+win-icon-res = { path = "../crates/win-icon-res" }

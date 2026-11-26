@@ -1,0 +1,247 @@
+/* ============================================================================
+ * Dragon Browser — Internal Page Stylesheet (userContent.css)
+ * Eliminates white navigation flashes and forces unified Obsidian dark mode:
+ *   - about:blank / about:newtab / about:home
+ *   - All internal about:* pages (Preferences, Addons, Config, Neterror, etc.)
+ *   - about:privatebrowsing (Clean Obsidian-Violet fallback)
+ *   - about:reader (Dark Obsidian Reading Mode)
+ * ============================================================================ */
+
+/* --- Prevent White Flashes on Blank & Pre-Navigation Pages --- */
+@-moz-document url("about:blank"), url("about:newtab"), url("about:home") {
+  html,
+  body {
+    background-color: #09090d !important;
+    color: #f4f4f8 !important;
+    color-scheme: dark !important;
+  }
+}
+
+/* --- Forced Obsidian Dark Theme Across All Internal about:* Pages --- */
+@-moz-document url-prefix("about:") {
+  :root {
+    --in-content-page-background: #09090d !important;
+    --in-content-page-color: #f4f4f8 !important;
+    --in-content-box-background: #13141c !important;
+    --in-content-box-background-hover: #1a1c27 !important;
+    --in-content-box-border-color: rgba(255, 255, 255, 0.1) !important;
+    --in-content-accent-color: #e84855 !important;
+    --in-content-accent-color-active: #ff5f6d !important;
+    --in-content-primary-button-background: #e84855 !important;
+    --in-content-primary-button-background-hover: #f25563 !important;
+    --in-content-primary-button-background-active: #d43745 !important;
+    --in-content-primary-button-text-color: #ffffff !important;
+    --in-content-button-background: #181a24 !important;
+    --in-content-button-background-hover: #212432 !important;
+    --in-content-button-text-color: #f4f4f8 !important;
+    --in-content-link-color: #ff7a85 !important;
+    --background-color-canvas: #09090d !important;
+    --background-color-box: #13141c !important;
+    --border-color: rgba(255, 255, 255, 0.1) !important;
+    --border-radius-small: 10px !important;
+    --border-radius-medium: 14px !important;
+    --border-radius-large: 20px !important;
+    --button-border-radius: 13px !important;
+    --color-accent-primary: #e84855 !important;
+    --color-accent-primary-hover: #f25563 !important;
+    --color-accent-primary-active: #d43745 !important;
+    --button-background-color-primary: #e84855 !important;
+    --button-background-color-primary-hover: #f25563 !important;
+    --button-background-color-primary-active: #d43745 !important;
+    --button-text-color-primary: #ffffff !important;
+    color-scheme: dark !important;
+  }
+
+  moz-card,
+  .card,
+  .addon,
+  search-textbox,
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  select,
+  moz-button:not([type="icon"])::part(button) {
+    corner-shape: squircle !important;
+  }
+
+  html,
+  body {
+    background-color: #09090d !important;
+    color: #f4f4f8 !important;
+    color-scheme: dark !important;
+    scrollbar-color: rgba(255, 255, 255, 0.18) #09090d !important;
+    scrollbar-width: thin !important;
+  }
+}
+
+/* --- Private Browsing Landing Page (Clean Obsidian-Violet Fallback) --- */
+@-moz-document url("about:privatebrowsing") {
+  :root {
+    --in-content-page-background: #0c0914 !important;
+    --in-content-page-color: #eee9f8 !important;
+    --in-content-box-background: #161126 !important;
+    --in-content-box-border-color: rgba(155, 109, 255, 0.25) !important;
+    --in-content-accent-color: #9b6dff !important;
+    --in-content-accent-color-active: #b18cff !important;
+    --in-content-link-color: #b794ff !important;
+    --background-color-canvas: #0c0914 !important;
+  }
+
+  html,
+  html.private,
+  body {
+    --background-color-canvas: #0c0914 !important;
+    background:
+      radial-gradient(640px 360px at 50% 42%, rgba(155, 109, 255, 0.14), transparent 72%),
+      #0c0914 !important;
+    color: #eee9f8 !important;
+    font-family: "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, sans-serif !important;
+    color-scheme: dark !important;
+  }
+
+  html.private body::before,
+  .wordmark,
+  .nova-tagline,
+  .promo,
+  .promo-cta,
+  #promo-cta,
+  .vpn-promo,
+  #search-banner,
+  .info-border,
+  .info {
+    display: none !important;
+  }
+
+  .search-inner-wrapper {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  content-search-handoff-ui {
+    --content-search-handoff-ui-background-color: #161126 !important;
+    --content-search-handoff-ui-color: #eee9f8 !important;
+    --content-search-handoff-ui-fill: #c4b5fd !important;
+    --content-search-handoff-ui-caret-color: #eee9f8 !important;
+    --content-search-handoff-ui-border-width: 1px !important;
+    --content-search-handoff-ui-unfocused-border-color: rgba(155, 109, 255, 0.35) !important;
+    --content-search-handoff-ui-fakefocus-border-color: #9b6dff !important;
+    --content-search-handoff-ui-fakefocus-box-shadow-inner: #9b6dff !important;
+    --content-search-handoff-ui-fakefocus-box-shadow-outer: rgba(155, 109, 255, 0.25) !important;
+  }
+}
+
+/* --- Reader Mode (about:reader) Dark Obsidian Typography --- */
+@-moz-document url-prefix("about:reader") {
+  body.dark,
+  body:not(.light):not(.sepia) {
+    --main-background: #09090d !important;
+    --main-foreground: #e8ebf3 !important;
+    --toolbar-bgcolor: #13141c !important;
+    --toolbar-border: rgba(255, 255, 255, 0.09) !important;
+    --popup-background: #13141c !important;
+    --popup-border: rgba(255, 255, 255, 0.14) !important;
+    --link-foreground: #ff7a85 !important;
+    --visited-link-foreground: #c084fc !important;
+    --selection-background: rgba(232, 72, 85, 0.28) !important;
+    background-color: #09090d !important;
+    color: #e8ebf3 !important;
+    color-scheme: dark !important;
+  }
+
+  body.dark .container,
+  body:not(.light):not(.sepia) .container {
+    max-width: 72ch !important;
+    padding-top: 36px !important;
+    padding-bottom: 72px !important;
+    line-height: 1.78 !important;
+    letter-spacing: 0.005em !important;
+    -webkit-font-smoothing: antialiased !important;
+  }
+
+  body.dark .header > h1,
+  body:not(.light):not(.sepia) .header > h1 {
+    color: #f4f4f8 !important;
+    font-weight: 700 !important;
+    line-height: 1.28 !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  body.dark .header .credits,
+  body.dark .header .meta-data,
+  body:not(.light):not(.sepia) .header .credits,
+  body:not(.light):not(.sepia) .header .meta-data {
+    color: #9a9cb0 !important;
+  }
+
+  body.dark .header,
+  body:not(.light):not(.sepia) .header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  body.dark a,
+  body:not(.light):not(.sepia) a {
+    color: #ff7a85 !important;
+    text-decoration-color: rgba(255, 122, 133, 0.45) !important;
+    text-underline-offset: 3px !important;
+  }
+
+  body.dark blockquote,
+  body:not(.light):not(.sepia) blockquote {
+    border-inline-start: 3px solid #e84855 !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    padding: 12px 18px !important;
+    border-radius: 0 12px 12px 0 !important;
+    corner-shape: squircle !important;
+    color: #c7cddc !important;
+  }
+
+  body.dark pre,
+  body.dark code,
+  body:not(.light):not(.sepia) pre,
+  body:not(.light):not(.sepia) code {
+    background-color: #13141c !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px !important;
+    corner-shape: squircle !important;
+    color: #e6ecf8 !important;
+  }
+
+  body.dark .toolbar,
+  body:not(.light):not(.sepia) .toolbar {
+    background-color: #13141c !important;
+    border-color: rgba(255, 255, 255, 0.09) !important;
+    border-radius: 14px !important;
+    corner-shape: squircle !important;
+  }
+}
+
+/* --- Dark Obsidian Bookmarks & History Sidebars --- */
+@-moz-document url-prefix("chrome://browser/content/places/") {
+  :root,
+  window,
+  page,
+  body {
+    color-scheme: dark !important;
+    background-color: #0f0f16 !important;
+    color: #f4f4f8 !important;
+    scrollbar-color: rgba(255, 255, 255, 0.18) #0f0f16 !important;
+    scrollbar-width: thin !important;
+  }
+
+  #search-box,
+  search-textbox,
+  textbox {
+    background-color: #13141c !important;
+    color: #f4f4f8 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 11px !important;
+    corner-shape: squircle !important;
+  }
+
+  tree,
+  #bookmarks-view,
+  #historyTree {
+    background-color: #0f0f16 !important;
+    color: #f4f4f8 !important;
+  }
+}

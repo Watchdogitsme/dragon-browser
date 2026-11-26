@@ -1,0 +1,5 @@
+[package]
+name = "win-icon-res"
+version = "1.0.0"
+edition = "2021"
+description = "Pure-Rust x86_64 Windows COFF .rsrc icon resource generator"

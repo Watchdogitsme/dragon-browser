@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <defs>
+    <linearGradient id="dragon-bg" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#18181f"/>
+      <stop offset="100%" stop-color="#0b0b10"/>
+    </linearGradient>
+    <linearGradient id="dragon-ember" x1="14" y1="12" x2="52" y2="54" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ff6b3d"/>
+      <stop offset="50%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#b91c1c"/>
+    </linearGradient>
+    <linearGradient id="dragon-highlight" x1="20" y1="10" x2="46" y2="38" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fca5a5"/>
+      <stop offset="100%" stop-color="#ef4444"/>
+    </linearGradient>
+  </defs>
+  <rect x="3" y="3" width="58" height="58" rx="15" fill="url(#dragon-bg)" stroke="#2c2c38" stroke-width="2"/>
+  <path d="M16 44L21 20L15 12L28 18L36 10L39 19L50 22L42 29L48 36L35 37L38 49L27 42L19 52L22 41L16 44Z" fill="url(#dragon-ember)"/>
+  <path d="M21 20L28 18L36 10L39 19L30 26L21 20Z" fill="url(#dragon-highlight)" opacity="0.72"/>
+  <path d="M30 26L42 29L35 37L25 34L30 26Z" fill="#7f1d1d" opacity="0.55"/>
+  <polygon points="34,23 39,24.5 35.5,27" fill="#fff7ed"/>
+</svg>

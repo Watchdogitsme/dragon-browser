@@ -1,0 +1,35 @@
+# ==============================================================================
+# Dragon Browser - Mozilla Gecko Engine Build Configuration (Linux x86_64)
+# Target: mozilla-esr153 (153.7.0esr)
+# ==============================================================================
+
+ac_add_options --enable-application=browser
+ac_add_options --target=x86_64-pc-linux-gnu
+ac_add_options --with-app-name=dragon
+ac_add_options --with-app-basename=Dragon
+ac_add_options --with-branding=browser/branding/dragon
+ac_add_options --with-distribution-id=org.dragonbrowser
+ac_add_options --with-unsigned-addon-scopes=app,system
+
+# Release & Performance Optimization
+ac_add_options --enable-release
+ac_add_options --enable-optimize="-O3"
+ac_add_options --enable-strip
+ac_add_options --enable-install-strip
+ac_add_options --enable-hardening
+
+# Strip Telemetry, Crash Reporter, Updater, and Debug Symbols at Compile Time
+ac_add_options --disable-crashreporter
+ac_add_options --disable-updater
+ac_add_options --disable-tests
+ac_add_options --disable-debug
+ac_add_options --disable-debug-symbols
+ac_add_options --disable-parental-controls
+ac_add_options --without-wasm-sandboxed-libraries
+
+# Disable Telemetry and Forced Add-on Signature Locks
+# (MOZ_SERVICES_HEALTHREPORT, MOZ_NORMANDY, and MOZ_APP_VENDOR are implied in browser/moz.configure)
+export MOZ_TELEMETRY_REPORTING=
+export MOZ_REQUIRE_SIGNING=
+
+mk_add_options "MOZ_OBJDIR=${MOZ_OBJDIR:-@TOPSRCDIR@/obj-dragon}"

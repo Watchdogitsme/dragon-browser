@@ -1,0 +1,50 @@
+From 0000000000000000000000000000000000000001 Mon Sep 17 00:00:00 2001
+From: Dragon Browser Engine Team <engine@dragonbrowser.local>
+Date: Mon, 19 Nov 2026 00:00:00 +0000
+Subject: [PATCH 1/4] Dragon AppConstants: disable telemetry/crashreporter/updater and allow built-in unsigned system scope
+
+---
+diff --git a/toolkit/modules/AppConstants.sys.mjs b/toolkit/modules/AppConstants.sys.mjs
+--- a/toolkit/modules/AppConstants.sys.mjs
++++ b/toolkit/modules/AppConstants.sys.mjs
+@@ -9,25 +9,25 @@
+   NIGHTLY_BUILD: false,
+   RELEASE_OR_BETA: true,
+   IS_ESR: true,
+-  MOZ_DATA_REPORTING: true,
+-  MOZ_TELEMETRY_REPORTING: true,
+-  MOZ_UPDATER: true,
+-  MOZ_CRASHREPORTER: true,
+-  MOZ_NORMANDY: true,
+-  MOZ_MAINTENANCE_SERVICE: true,
+-  MOZ_UPDATE_AGENT: true,
++  MOZ_DATA_REPORTING: false,
++  MOZ_TELEMETRY_REPORTING: false,
++  MOZ_UPDATER: false,
++  MOZ_CRASHREPORTER: false,
++  MOZ_NORMANDY: false,
++  MOZ_MAINTENANCE_SERVICE: false,
++  MOZ_UPDATE_AGENT: false,
+   MOZ_REQUIRE_SIGNING: false,
+-  MOZ_UNSIGNED_APP_SCOPE: false,
+-  MOZ_UNSIGNED_SYSTEM_SCOPE: false,
++  MOZ_UNSIGNED_APP_SCOPE: true,
++  MOZ_UNSIGNED_SYSTEM_SCOPE: true,
+   MOZ_ALLOW_ADDON_SIDELOAD: true,
+-  MOZ_APP_NAME: "firefox",
+-  MOZ_APP_BASENAME: "Firefox",
+-  MOZ_APP_DISPLAYNAME_DO_NOT_USE: "Firefox",
++  MOZ_APP_NAME: "dragon",
++  MOZ_APP_BASENAME: "Dragon",
++  MOZ_APP_DISPLAYNAME_DO_NOT_USE: "Dragon Browser",
+   MOZ_APP_VERSION: "153.7.0",
+   MOZ_APP_VERSION_DISPLAY: "153.7.0esr",
+-  MOZ_GOOGLE_SAFEBROWSING_API_KEY: "@MOZ_GOOGLE_SAFEBROWSING_API_KEY@",
+-  MOZ_MOZILLA_API_KEY: "@MOZ_MOZILLA_API_KEY@",
++  MOZ_GOOGLE_SAFEBROWSING_API_KEY: "no-safebrowsing-api-key",
++  MOZ_MOZILLA_API_KEY: "no-mozilla-api-key",
+   BROWSER_CHROME_URL: "chrome://browser/content/browser.xhtml",
+   OMNIJAR_NAME: "omni.ja",
+-  REMOTE_SETTINGS_VERIFY_SIGNATURE: true,
++  REMOTE_SETTINGS_VERIFY_SIGNATURE: false,
+ });

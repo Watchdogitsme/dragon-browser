@@ -1,0 +1,241 @@
+From 0000000000000000000000000000000000000002 Mon Sep 17 00:00:00 2001
+From: Dragon Browser Engine Team <engine@dragonbrowser.local>
+Date: Mon, 19 Nov 2026 00:00:00 +0000
+Subject: [PATCH 2/4] Dragon Default Prefs: compile low-RAM, consolidated-process, zero-telemetry, and privacy defaults into firefox.js
+
+---
+diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
+--- a/browser/app/profile/firefox.js
++++ b/browser/app/profile/firefox.js
+@@ -7,3 +7,178 @@
+ pref("browser.startup.page", 1);
+ pref("browser.tabs.warnOnClose", false);
+ pref("toolkit.legacyUserProfileCustomizations.stylesheets", false);
++
++/* === DRAGON_ENGINE_COMPILED_PREFS === */
++// ============================================================================
++// Dragon Browser — Gecko Engine Configuration (user.js)
++// Low-RAM, Consolidated-Process, Zero-Bloat, Privacy-First Defaults
++// ============================================================================
++
++// --- Process Consolidation (Balanced IsolateHighValue, Sandboxed) ---
++pref("fission.autostart", true);
++pref("fission.webContentIsolationStrategy", 2);
++pref("dom.ipc.processCount", 2);
++pref("dom.ipc.processCount.webIsolated", 1);
++pref("dom.ipc.processCount.file", 1);
++pref("dom.ipc.processCount.privilegedabout", 1);
++pref("dom.ipc.processCount.privilegedmozilla", 1);
++pref("dom.ipc.processCount.inference", 0);
++pref("dom.ipc.processPrelaunch.enabled", false);
++pref("dom.ipc.processPrelaunch.fission.number", 0);
++pref("dom.ipc.keepProcessesAlive.web", 0);
++pref("dom.ipc.keepProcessesAlive.privilegedabout", 0);
++pref("dom.ipc.processPriorityManager.enabled", true);
++pref("dom.ipc.processPriorityManager.backgroundUsesEcoQoS", true);
++pref("dom.ipc.processPriorityManager.backgroundPerceivableUsesEcoQoS", true);
++pref("browser.launcherProcess.enabled", false);
++pref("network.process.enabled", false);
++pref("media.utility-process.enabled", false);
++pref("widget.windows.utility_process_file_picker", false);
++pref("layers.gpu-process.enabled", true);
++pref("media.rdd-process.enabled", true);
++pref("browser.newtab.preload", false);
++pref("browser.startup.homepage.abouthome_cache.enabled", false);
++pref("browser.newtabpage.disableNewTabAsAddon", true);
++pref("browser.tabs.remote.warmup.enabled", false);
++
++// --- Low-RAM Caches, BFCache, Image/Media & SpiderMonkey GC ---
++pref("browser.tabs.unloadOnLowMemory", true);
++pref("browser.tabs.min_inactive_duration_before_unload", 300000);
++pref("browser.low_commit_space_threshold_mb", 1024);
++pref("browser.sessionhistory.max_total_viewers", 1);
++pref("browser.sessionhistory.max_entries", 20);
++pref("browser.sessionstore.interval", 60000);
++pref("browser.sessionstore.max_tabs_undo", 5);
++pref("browser.sessionstore.max_windows_undo", 2);
++pref("browser.sessionstore.max_serialize_back", 3);
++pref("browser.sessionstore.max_serialize_forward", 1);
++pref("browser.cache.memory.enable", true);
++pref("browser.cache.memory.capacity", 32768);
++pref("browser.cache.memory.max_entry_size", 5120);
++pref("browser.cache.disk.enable", true);
++pref("browser.cache.disk.smart_size.enabled", false);
++pref("browser.cache.disk.capacity", 131072);
++pref("gfx.webrender.all", true);
++pref("gfx.webrender.precache-shaders", true);
++pref("gfx.webrender.compositor", true);
++pref("gfx.webrender.compositor.force-enabled", true);
++pref("gfx.canvas.accelerated", true);
++pref("gfx.canvas.accelerated.cache-items", 2048);
++pref("gfx.canvas.accelerated.cache-size", 64);
++pref("image.mem.discardable", true);
++pref("image.mem.decode_bytes_at_a_time", 65536);
++pref("image.mem.surfacecache.max_size_kb", 65536);
++pref("image.mem.surfacecache.min_expiration_ms", 15000);
++pref("image.mem.shared.unmap.min_expiration_ms", 15000);
++pref("media.memory_cache_max_size", 16384);
++pref("media.memory_caches_combined_limit_kb", 65536);
++pref("media.memory_caches_combined_limit_pc_sysmem", 2);
++pref("media.cache_readahead_limit", 30);
++pref("media.cache_resume_threshold", 15);
++pref("javascript.options.mem.nursery.max_kb", 16384);
++pref("javascript.options.mem.gc_balanced_heap_limits", true);
++pref("javascript.options.mem.gc_high_frequency_heap_growth_max", 150);
++pref("memory.ghost_window_timeout_seconds", 20);
++pref("nglayout.initialpaint.delay", 0);
++pref("nglayout.initialpaint.delay_in_oopif", 0);
++pref("content.notify.interval", 100000);
++
++// --- Zero Telemetry & Crash Reporting ---
++pref("toolkit.telemetry.unified", false);
++pref("toolkit.telemetry.enabled", false);
++pref("toolkit.telemetry.server", "data:,");
++pref("toolkit.telemetry.archive.enabled", false);
++pref("toolkit.telemetry.newProfilePing.enabled", false);
++pref("toolkit.telemetry.shutdownPingSender.enabled", false);
++pref("toolkit.telemetry.updatePing.enabled", false);
++pref("toolkit.telemetry.bhrPing.enabled", false);
++pref("toolkit.telemetry.firstShutdownPing.enabled", false);
++pref("toolkit.telemetry.coverage.opt-out", true);
++pref("toolkit.coverage.opt-out", true);
++pref("toolkit.coverage.endpoint.base", "");
++pref("datareporting.healthreport.uploadEnabled", false);
++pref("datareporting.policy.dataSubmissionEnabled", false);
++pref("datareporting.usage.uploadEnabled", false);
++pref("browser.ping-centre.telemetry", false);
++pref("browser.newtabpage.activity-stream.telemetry", false);
++pref("browser.newtabpage.activity-stream.feeds.telemetry", false);
++pref("breakpad.reportURL", "");
++pref("browser.tabs.crashReporting.sendReport", false);
++pref("browser.crashReports.unsubmittedCheck.autoSubmit2", false);
++
++// --- Disable Shield, Normandy Studies & Experiments ---
++pref("app.shield.optoutstudies.enabled", false);
++pref("app.normandy.enabled", false);
++pref("app.normandy.api_url", "");
++pref("messaging-system.rsexperimentloader.enabled", false);
++
++// --- Disable On-Device AI / ML, Translations, Backup & Background Services ---
++pref("browser.ml.enable", false);
++pref("browser.ml.chat.enabled", false);
++pref("browser.ml.chat.sidebar", false);
++pref("browser.ml.chat.shortcuts", false);
++pref("browser.ml.chat.page", false);
++pref("browser.ml.linkPreview.enabled", false);
++pref("browser.tabs.groups.smart.enabled", false);
++pref("browser.tabs.groups.smart.userEnabled", false);
++pref("browser.ai.control.default", "blocked");
++pref("browser.smartwindow.enabled", false);
++pref("browser.translations.enable", false);
++pref("browser.translations.select.enable", false);
++pref("browser.backup.enabled", false);
++pref("browser.backup.scheduled.enabled", false);
++pref("browser.pagethumbnails.capturing_disabled", true);
++pref("browser.tabs.hoverPreview.showThumbnails", false);
++pref("browser.profiles.enabled", false);
++pref("browser.taskbarTabs.enabled", false);
++pref("accessibility.force_disabled", 1);
++pref("dom.push.enabled", false);
++pref("network.captive-portal-service.enabled", false);
++pref("network.connectivity-service.enabled", false);
++pref("browser.safebrowsing.malware.enabled", false);
++pref("browser.safebrowsing.phishing.enabled", false);
++pref("browser.safebrowsing.downloads.enabled", false);
++pref("browser.safebrowsing.downloads.remote.enabled", false);
++
++// --- Disable Pocket, Sponsored Top Sites & Activity Stream Bloat ---
++pref("extensions.pocket.enabled", false);
++pref("extensions.pocket.api", "");
++pref("extensions.pocket.site", "");
++pref("browser.newtabpage.activity-stream.showSponsored", false);
++pref("browser.newtabpage.activity-stream.showSponsoredTopSites", false);
++pref("browser.newtabpage.activity-stream.feeds.section.topstories", false);
++pref("browser.newtabpage.activity-stream.section.highlights.includePocket", false);
++pref("browser.newtabpage.activity-stream.feeds.topsites", false);
++pref("browser.newtabpage.activity-stream.default.sites", "");
++pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.addons", false);
++pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features", false);
++pref("browser.topsites.contile.enabled", false);
++pref("browser.urlbar.quicksuggest.enabled", false);
++pref("browser.urlbar.suggest.quicksuggest.sponsored", false);
++pref("browser.urlbar.suggest.quicksuggest.nonsponsored", false);
++pref("browser.shopping.experience2023.enabled", false);
++
++// --- Disable Firefox View, FxA Nags, Welcome & What's New Pages ---
++pref("browser.tabs.firefox-view", false);
++pref("browser.tabs.firefox-view-next", false);
++pref("identity.fxaccounts.enabled", false);
++pref("identity.fxaccounts.toolbar.enabled", false);
++pref("browser.aboutwelcome.enabled", false);
++pref("trailhead.firstrun.didSeeAboutWelcome", true);
++pref("browser.startup.homepage_override.mstone", "ignore");
++pref("startup.homepage_welcome_url", "");
++pref("startup.homepage_welcome_url.additional", "");
++pref("startup.homepage_override_url", "");
++pref("browser.messaging-system.whatsNewPanel.enabled", false);
++pref("browser.shell.checkDefaultBrowser", false);
++pref("browser.uitour.enabled", false);
++pref("browser.discovery.enabled", false);
++pref("extensions.htmlaboutaddons.recommendations.enabled", true);
++
++// --- Lean Network Tuning (No Speculative Prefetch or Bloated Pools) ---
++pref("network.prefetch-next", false);
++pref("network.predictor.enabled", false);
++pref("network.predictor.enable-prefetch", false);
++pref("network.http.http3.enable", true);
++pref("network.early-hints.enabled", true);
++pref("network.http.max-connections", 256);
++pref("network.http.max-persistent-connections-per-server", 6);
++pref("network.http.max-urgent-start-excessive-connections-per-host", 5);
++pref("network.dnsCacheEntries", 400);
++pref("network.dnsCacheExpiration", 1800);
++pref("network.ssl_tokens_cache_capacity", 1024);
++pref("network.dns.disablePrefetch", true);
++pref("network.dns.disablePrefetchFromHTTPS", true);
++pref("network.http.speculative-parallel-limit", 0);
++pref("browser.urlbar.speculativeConnect.enabled", false);
++pref("browser.places.speculativeConnect.enabled", false);
++
++// --- Privacy Defaults ---
++pref("browser.contentblocking.category", "strict");
++pref("dom.security.https_only_mode", true);
++pref("dom.security.https_only_mode_ever_enabled", true);
++pref("privacy.donottrackheader.enabled", true);
++pref("privacy.globalprivacycontrol.enabled", true);
++pref("privacy.trackingprotection.enabled", true);
++pref("privacy.trackingprotection.socialtracking.enabled", true);
++pref("privacy.query_stripping.enabled", true);
++pref("privacy.query_stripping.enabled.pbmode", true);
++pref("network.http.referer.XOriginTrimmingPolicy", 2);
++pref("beacon.enabled", false);
++
++// --- Dragon UI & Feature Flags ---
++pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
++pref("layout.css.corner-shape.enabled", true);
++pref("browser.tabs.splitView.enabled", true);
++pref("browser.tabs.inTitlebar", 1);
++pref("browser.tabs.drawInTitlebar", true);
++pref("browser.uidensity", 1);
++pref("browser.compactmode.show", true);
++pref("browser.toolbars.bookmarks.visibility", "never");
++pref("layout.css.prefers-color-scheme.content-override", 0);
++pref("ui.systemUsesDarkTheme", 1);
++pref("reader.color_scheme", "dark");
++pref("browser.ctrlTab.sortByRecentlyUsed", true);
++pref("browser.urlbar.trimURLs", true);
++pref("browser.tabs.tabClipWidth", 0);
++pref("browser.display.background_color.dark", "#09090d");
++pref("browser.display.foreground_color.dark", "#f4f4f8");
++pref("pdfjs.viewerCssTheme", 2);
++pref("general.smoothScroll", true);
++pref("general.smoothScroll.msdPhysics.enabled", true);
++pref("general.smoothScroll.msdPhysics.continuousMotionMaxDeltaMS", 12);
++pref("general.smoothScroll.msdPhysics.motionBeginSpringConstant", 600);
++pref("general.smoothScroll.msdPhysics.regularSpringConstant", 650);
++pref("general.smoothScroll.msdPhysics.slowdownSpringConstant", 250);
++pref("mousewheel.min_line_scroll_amount", 10);
++pref("extensions.autoDisableScopes", 0);
++pref("extensions.enabledScopes", 15);
++pref("xpinstall.signatures.required", false);
++pref("browser.startup.homepage", "chrome://dragon/content/home/home.html");

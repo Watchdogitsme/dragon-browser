@@ -1,0 +1,126 @@
+{
+  "policies": {
+    "DisableTelemetry": true,
+    "DisableFirefoxStudies": true,
+    "DisablePocket": true,
+    "DisableAppUpdate": true,
+    "DontCheckDefaultBrowser": true,
+    "OverrideFirstRunPage": "",
+    "OverridePostUpdatePage": "",
+    "DisableFirefoxAccounts": true,
+    "DisableFeedbackCommands": true,
+    "DisableFirefoxScreenshots": true,
+    "DisableProfileImport": true,
+    "DisableSystemAddonUpdate": true,
+    "NoDefaultBookmarks": true,
+    "GenerativeAI": {
+      "Enabled": false,
+      "Locked": false
+    },
+    "FirefoxHome": {
+      "Search": false,
+      "TopSites": false,
+      "SponsoredTopSites": false,
+      "Highlights": false,
+      "Pocket": false,
+      "SponsoredPocket": false,
+      "Snippets": false,
+      "Locked": false
+    },
+    "UserMessaging": {
+      "ExtensionRecommendations": false,
+      "FeatureRecommendations": false,
+      "UrlbarInterventions": false,
+      "SkipOnboarding": true,
+      "MoreFromMozilla": false,
+      "Locked": false
+    },
+    "Preferences": {
+      "xpinstall.signatures.required": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "toolkit.legacyUserProfileCustomizations.stylesheets": {
+        "Value": true,
+        "Status": "default"
+      },
+      "browser.tabs.unloadOnLowMemory": {
+        "Value": true,
+        "Status": "default"
+      }
+    },
+    "ExtensionSettings": {
+      "*": {
+        "installation_mode": "allowed"
+      }
+    },
+    "SearchEngines": {
+      "Default": "Google",
+      "Add": [
+        {
+          "Name": "Google",
+          "URLTemplate": "https://www.google.com/search?q={searchTerms}",
+          "Method": "GET",
+          "Alias": "@google",
+          "Description": "Search the web with Google"
+        },
+        {
+          "Name": "DuckDuckGo",
+          "URLTemplate": "https://duckduckgo.com/?q={searchTerms}",
+          "Method": "GET",
+          "Alias": "@ddg",
+          "Description": "Private web search with DuckDuckGo"
+        },
+        {
+          "Name": "Brave Search",
+          "URLTemplate": "https://search.brave.com/search?q={searchTerms}",
+          "Method": "GET",
+          "Alias": "@brave",
+          "Description": "Independent web search with Brave Search"
+        },
+        {
+          "Name": "Bing",
+          "URLTemplate": "https://www.bing.com/search?q={searchTerms}",
+          "Method": "GET",
+          "Alias": "@bing",
+          "Description": "Search the web with Microsoft Bing"
+        },
+        {
+          "Name": "Startpage",
+          "URLTemplate": "https://www.startpage.com/do/search?q={searchTerms}",
+          "Method": "GET",
+          "Alias": "@sp",
+          "Description": "Private search with Startpage"
+        },
+        {
+          "Name": "Gemini",
+          "URLTemplate": "https://gemini.google.com/app#dragon_q={searchTerms}",
+          "Method": "GET",
+          "Alias": "@gemini",
+          "Description": "Ask Google Gemini directly"
+        },
+        {
+          "Name": "Claude",
+          "URLTemplate": "https://claude.ai/new?q={searchTerms}",
+          "Method": "GET",
+          "Alias": "@claude",
+          "Description": "Ask Anthropic Claude directly"
+        },
+        {
+          "Name": "ChatGPT",
+          "URLTemplate": "https://chatgpt.com/?q={searchTerms}&hints=search",
+          "Method": "GET",
+          "Alias": "@gpt",
+          "Description": "Ask OpenAI ChatGPT directly"
+        },
+        {
+          "Name": "Perplexity",
+          "URLTemplate": "https://www.perplexity.ai/search?q={searchTerms}",
+          "Method": "GET",
+          "Alias": "@perp",
+          "Description": "Search and research with Perplexity AI"
+        }
+      ]
+    }
+  }
+}

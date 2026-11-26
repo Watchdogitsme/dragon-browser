@@ -1,0 +1,9 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!ENTITY  brandShorterName      "Dragon">
+<!ENTITY  brandShortName        "Dragon Browser">
+<!ENTITY  brandFullName         "Dragon Browser">
+<!ENTITY  vendorShortName       "Dragon">
+<!ENTITY  trademarkInfo.part1   "Dragon Browser is an independent Gecko-powered web browser.">

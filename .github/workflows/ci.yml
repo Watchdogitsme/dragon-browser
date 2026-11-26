@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-build-windows:
+    name: Test & Build Windows Binaries
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python test dependencies
+        run: python -m pip install --upgrade pip pytest pillow
+
+      - name: Run Rust workspace tests
+        run: cargo test --workspace --locked
+
+      - name: Generate branding assets
+        run: python engine/scripts/generate-branding-assets.py
+
+      - name: Build Windows launcher & installer stub
+        run: cargo build --release --locked -p dragon-browser -p dragon-installer-stub
+
+      - name: Stage dist layout for verification
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist/resources/autoconfig, dist/resources/chrome, installer/build | Out-Null
+          Copy-Item target/release/dragon-browser.exe dist/dragon-browser.exe -Force
+          Copy-Item target/release/dragon-installer-stub.exe installer/build/dragon-installer-stub.exe -Force
+          Copy-Item gecko/user.js dist/resources/user.js -Force
+          Copy-Item gecko/policies.template.json dist/resources/policies.template.json -Force
+          Copy-Item gecko/autoconfig/* dist/resources/autoconfig/ -Force
+          Copy-Item gecko/chrome/* dist/resources/chrome/ -Force
+          Copy-Item scripts/setup-runtime.ps1 dist/setup-runtime.ps1 -Force
+          Copy-Item scripts/setup-runtime.sh dist/setup-runtime.sh -Force
+
+      - name: Verify launcher CLI health
+        shell: pwsh
+        run: |
+          foreach ($flag in @('--help', '--version')) {
+            $p = Start-Process -FilePath ./dist/dragon-browser.exe -ArgumentList $flag -Wait -PassThru -NoNewWindow
+            if ($p.ExitCode -ne 0) { throw "dragon-browser.exe $flag failed with exit code $($p.ExitCode)" }
+          }
+
+      - name: Run Python test suite
+        run: pytest -v tests/

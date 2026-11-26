@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000004 Mon Sep 17 00:00:00 2001
+From: Dragon Browser Engine Team <engine@dragonbrowser.local>
+Date: Mon, 19 Nov 2026 00:00:00 +0000
+Subject: [PATCH 4/4] Dragon Branding Locales: rebrand toolkit feature names in brandings.ftl
+
+---
+diff --git a/toolkit/locales/en-US/toolkit/branding/brandings.ftl b/toolkit/locales/en-US/toolkit/branding/brandings.ftl
+--- a/toolkit/locales/en-US/toolkit/branding/brandings.ftl
++++ b/toolkit/locales/en-US/toolkit/branding/brandings.ftl
+@@ -2,10 +2,10 @@
+ # License, v. 2.0. If a copy of the MPL was not distributed with this
+ # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+--screenshots-brand-name = Firefox Screenshots
+--profiler-brand-name = Firefox Profiler
+--translations-brand-name = Firefox Translations
+--firefox-suggest-brand-name = Firefox Suggest
+--firefox-home-brand-name = Firefox Home
+--firefoxview-brand-name = Firefox View
+--firefoxlabs-brand-name = Firefox Labs
++-screenshots-brand-name = Dragon Screenshots
++-profiler-brand-name = Dragon Profiler
++-translations-brand-name = Dragon Translations
++-firefox-suggest-brand-name = Dragon Suggest
++-firefox-home-brand-name = Dragon Home
++-firefoxview-brand-name = Dragon View
++-firefoxlabs-brand-name = Dragon Labs
